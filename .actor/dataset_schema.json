@@ -1,0 +1,31 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "type": "object",
+    "properties": {
+      "source": {"type": "string", "description": "ATS source."},
+      "company": {"type": "string", "description": "Company board identifier supplied in input."},
+      "id": {"type": "string", "description": "Source job identifier. Combined with source and company for deduplication."},
+      "title": {"type": ["string", "null"], "description": "Published job title."},
+      "location": {"type": ["string", "null"], "description": "Published location text, including available secondary locations."},
+      "remote": {"type": ["boolean", "null"], "description": "Remote status from structured fields or location text; null when unknown."},
+      "department": {"type": ["string", "null"], "description": "Published department or team."},
+      "url": {"type": ["string", "null"], "description": "Public job page."},
+      "publishedAt": {"type": ["string", "null"], "description": "Available publication or source creation date normalized to ISO UTC."},
+      "updatedAt": {"type": ["string", "null"], "description": "Source update date normalized to ISO UTC, when available."},
+      "salaryMin": {"type": ["number", "null"], "description": "Structured minimum salary without currency conversion."},
+      "salaryMax": {"type": ["number", "null"], "description": "Structured maximum salary without currency conversion."},
+      "salaryCurrency": {"type": ["string", "null"], "description": "Source salary currency."},
+      "salaryPeriod": {"type": ["string", "null"], "description": "Recognized salary period: hour, day, week, month or year."}
+    }
+  },
+  "views": {
+    "overview": {
+      "title": "New jobs",
+      "transformation": {
+        "fields": ["source", "company", "id", "title", "location", "remote", "department", "url", "publishedAt", "updatedAt", "salaryMin", "salaryMax", "salaryCurrency", "salaryPeriod"]
+      },
+      "display": {"component": "table"}
+    }
+  }
+}

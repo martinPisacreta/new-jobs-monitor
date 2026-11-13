@@ -1,0 +1,24 @@
+[
+  {
+    "company": "recruitee",
+    "url": "https://recruitee.recruitee.com/api/offers/",
+    "fetchedAt": "2026-11-13T13:34:40.109Z",
+    "status": 404,
+    "error": "HTTP 404; no retry"
+  },
+  {
+    "company": "fairphone",
+    "url": "https://fairphone.recruitee.com/api/offers/",
+    "fetchedAt": "2026-11-13T13:34:40.572Z",
+    "status": 403,
+    "error": "HTTP 403; no retry"
+  },
+  {
+    "company": "bunq",
+    "url": "https://bunq.recruitee.com/api/offers/",
+    "fetchedAt": "2026-11-13T13:34:41.020Z",
+    "status": 200,
+    "totalJobs": 23,
+    "fixtureJobs": 2
+  }
+]

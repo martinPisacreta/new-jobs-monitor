@@ -1,0 +1,38 @@
+[
+  {
+    "source": "greenhouse",
+    "company": "stripe",
+    "url": "https://boards-api.greenhouse.io/v1/boards/stripe/jobs?content=true",
+    "fetchedAt": "2026-11-13T13:30:33.887Z",
+    "status": 200,
+    "totalJobs": 785,
+    "fixtureJobs": 2
+  },
+  {
+    "source": "lever",
+    "company": "palantir",
+    "url": "https://api.lever.co/v0/postings/palantir?mode=json",
+    "fetchedAt": "2026-11-13T13:30:33.916Z",
+    "status": 200,
+    "totalJobs": 301,
+    "fixtureJobs": 2
+  },
+  {
+    "source": "ashby",
+    "company": "ramp",
+    "url": "https://api.ashbyhq.com/posting-api/job-board/ramp?includeCompensation=true",
+    "fetchedAt": "2026-11-13T13:30:33.917Z",
+    "status": 200,
+    "totalJobs": 180,
+    "fixtureJobs": 2
+  },
+  {
+    "source": "workable",
+    "company": "huggingface",
+    "url": "https://apply.workable.com/api/v1/widget/accounts/huggingface",
+    "fetchedAt": "2026-11-13T13:30:33.920Z",
+    "status": 200,
+    "totalJobs": 6,
+    "fixtureJobs": 2
+  }
+]

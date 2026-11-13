@@ -1,0 +1,19 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "New Jobs Monitor output",
+  "description": "Previously unseen matching jobs in the dataset and a run summary with per-board errors, counts and spending-limit status.",
+  "properties": {
+    "jobs": {
+      "type": "string",
+      "title": "New jobs",
+      "description": "Jobs saved to this run's default dataset. A saved but uncharged job may remain pending when the spending limit is reached.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items"
+    },
+    "summary": {
+      "type": "string",
+      "title": "Run report",
+      "description": "OUTPUT record containing per-board report, demo notice, maxNewJobs, maxNewJobsReached, pendingJobs, saved and processed counts, charged event counts and budgetReached. pendingJobs is null when boards were not requested. Demo saves no history or pending queue.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/OUTPUT"
+    }
+  }
+}

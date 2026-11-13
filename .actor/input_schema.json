@@ -1,0 +1,110 @@
+{
+  "title": "New Jobs Monitor input",
+  "description": "Choose public ATS boards and a persistent state key. Serialize runs using the same key.",
+  "type": "object",
+  "schemaVersion": 1,
+  "required": [
+    "companies"
+  ],
+  "properties": {
+    "companies": {
+      "title": "Company boards",
+      "type": "array",
+      "description": "Between 1 and 200 boards. Use board identifiers, not URLs.",
+      "editor": "json",
+      "minItems": 1,
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "required": [
+          "source",
+          "company"
+        ],
+        "properties": {
+          "source": {
+            "type": "string",
+            "enum": [
+              "greenhouse",
+              "lever",
+              "ashby",
+              "workable",
+              "recruitee"
+            ]
+          },
+          "company": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]*$"
+          }
+        }
+      },
+      "prefill": [
+        {
+          "source": "ashby",
+          "company": "linear"
+        },
+        {
+          "source": "workable",
+          "company": "huggingface"
+        },
+        {
+          "source": "recruitee",
+          "company": "bunq"
+        }
+      ]
+    },
+    "stateKey": {
+      "title": "State key",
+      "type": "string",
+      "description": "demo never reads or saves history and returns current matching jobs on every run. Repeated demo runs may charge the same jobs again. Omitted or blank values use default with persistent history. Use other keys for independent lists.",
+      "editor": "textfield",
+      "pattern": "^([A-Za-z0-9_-]{1,60}|\\s*)$",
+      "maxLength": 60,
+      "default": "default",
+      "prefill": "demo"
+    },
+    "firstRun": {
+      "title": "Initial run behavior",
+      "type": "string",
+      "description": "For persistent keys: all returns existing matching jobs on the initial run; none records a baseline. Demo always uses all and never saves history.",
+      "editor": "select",
+      "enum": [
+        "all",
+        "none"
+      ],
+      "default": "all"
+    },
+    "keywords": {
+      "title": "Title keywords",
+      "type": "array",
+      "description": "Up to 50 case-insensitive title substrings. Any keyword may match. Empty means no title filter.",
+      "editor": "stringList",
+      "maxItems": 50,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "default": []
+    },
+    "locations": {
+      "title": "Location keywords",
+      "type": "array",
+      "description": "Up to 50 case-insensitive location substrings. Any location may match. Empty means no location filter.",
+      "editor": "stringList",
+      "maxItems": 50,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "default": []
+    },
+    "maxNewJobs": {
+      "title": "Maximum new jobs per run",
+      "type": "integer",
+      "description": "Maximum jobs saved to the dataset in one run. For persistent keys, jobs beyond this limit remain pending for a later run.",
+      "editor": "number",
+      "minimum": 1,
+      "maximum": 10000,
+      "default": 1000
+    }
+  }
+}
