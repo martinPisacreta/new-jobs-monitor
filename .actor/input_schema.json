@@ -29,11 +29,17 @@
               "ashby",
               "workable",
               "recruitee"
-            ]
+            ],
+            "title": "ATS",
+            "description": "Applicant tracking system that hosts the board.",
+            "editor": "select"
           },
           "company": {
             "type": "string",
-            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]*$"
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]*$",
+            "title": "Board identifier",
+            "description": "Public board identifier of the company in that ATS, not a URL.",
+            "editor": "textfield"
           }
         }
       },
