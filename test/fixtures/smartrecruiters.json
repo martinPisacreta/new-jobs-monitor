@@ -1,0 +1,299 @@
+{
+  "offset": 0,
+  "limit": 100,
+  "totalFound": 190,
+  "content": [
+    {
+      "id": "744000161591209",
+      "name": " Software Engineering Manager, Core Storage",
+      "uuid": "133bdf25-d3c3-42f3-ab5b-4e75ae40c60d",
+      "jobAdId": "a63e3094-0ecc-468c-9c40-06450aae4406",
+      "defaultJobAd": true,
+      "refNumber": "REQ25732",
+      "company": {
+        "identifier": "LinkedIn3",
+        "name": "LinkedIn"
+      },
+      "releasedDate": "2026-11-13T22:59:57.899Z",
+      "location": {
+        "city": "Bellevue",
+        "region": "WA",
+        "country": "us",
+        "remote": false,
+        "hybrid": true,
+        "fullLocation": "Bellevue, WA, United States"
+      },
+      "industry": {
+        "id": "internet",
+        "label": "Internet"
+      },
+      "department": {
+        "id": "1713675",
+        "label": "Engineering"
+      },
+      "function": {
+        "id": "engineering",
+        "label": "Engineering"
+      },
+      "typeOfEmployment": {
+        "id": "permanent",
+        "label": "Full-time"
+      },
+      "experienceLevel": {
+        "id": "mid_senior_level",
+        "label": "Mid-Senior Level"
+      },
+      "customField": [
+        {
+          "fieldId": "5fca7483c7f623505f9a0585",
+          "fieldLabel": "Career Track & Grade",
+          "valueId": "MR39",
+          "valueLabel": "MR3/9"
+        },
+        {
+          "fieldId": "5fca72a4c7f623505f9a0584",
+          "fieldLabel": "Job Family and Level",
+          "valueId": "Software Engineering - Systems Infrastructure - MR3",
+          "valueLabel": "Software Engineering - Systems Infrastructure - MR3"
+        },
+        {
+          "fieldId": "COUNTRY",
+          "fieldLabel": "Country/Region",
+          "valueId": "us",
+          "valueLabel": "United States"
+        },
+        {
+          "fieldId": "5f342ede29cf3d34dae379c0",
+          "fieldLabel": "Secondary Language",
+          "valueId": "dc376009-020d-45f9-8052-cba8d16799d8",
+          "valueLabel": "N/A"
+        },
+        {
+          "fieldId": "5f342b333803e6711667cf97",
+          "fieldLabel": "Job Level",
+          "valueId": "d85494f8-2715-4ca0-aa54-9bd61ccd74b6",
+          "valueLabel": "Mid-Senior Level"
+        },
+        {
+          "fieldId": "5fca73e7a502b54127820081",
+          "fieldLabel": "System Title",
+          "valueId": "Manager Software Engineering Systems Infrastructure",
+          "valueLabel": "Manager, Software Engineering, Systems Infrastructure"
+        },
+        {
+          "fieldId": "5f342b6729cf3d34dae379be",
+          "fieldLabel": "Employee Type",
+          "valueId": "bb960dfc-ec2b-41c8-97cf-6fb155d89854",
+          "valueLabel": "Employee"
+        },
+        {
+          "fieldId": "5f342f14afa56d15f50c1a5b",
+          "fieldLabel": "Tertiary Language",
+          "valueId": "535057fb-da56-4f41-97c7-41e2e7351138",
+          "valueLabel": "N/A"
+        },
+        {
+          "fieldId": "6243642ce6aebe3bc5c22756",
+          "fieldLabel": "Workplace Type",
+          "valueId": "e089500a-bc74-4552-a50d-551cceec2265",
+          "valueLabel": "Hybrid"
+        },
+        {
+          "fieldId": "5f3425a7afa56d15f50c1a56",
+          "fieldLabel": "Recruiting Team",
+          "valueId": "adae896c-d331-4c49-b6e2-22684f4262d5",
+          "valueLabel": "NAMER Engineering"
+        },
+        {
+          "fieldId": "5fca715152c79415257db289",
+          "fieldLabel": "Cost Center Country",
+          "valueId": "UnitedStates",
+          "valueLabel": "United States"
+        },
+        {
+          "fieldId": "5fca7110c7f623505f9a0582",
+          "fieldLabel": "Cost Center:",
+          "valueId": "4020CoreInfra",
+          "valueLabel": "4020 - Core Infra"
+        },
+        {
+          "fieldId": "5f342c57afa56d15f50c1a5a",
+          "fieldLabel": "Region",
+          "valueId": "083bcabf-7d75-4f51-a91a-331d89c0d1b7",
+          "valueLabel": "NAMER"
+        },
+        {
+          "fieldId": "5f342b9229cf3d34dae379bf",
+          "fieldLabel": "Time Type",
+          "valueId": "0f99a586-37a4-4870-918e-8d72d49996d2",
+          "valueLabel": "Full Time"
+        },
+        {
+          "fieldId": "5f3175c83263b149688b3d7b",
+          "fieldLabel": "Brands",
+          "valueId": "default",
+          "valueLabel": "LinkedIn"
+        },
+        {
+          "fieldId": "5f3175c83263b149688b3d7c",
+          "fieldLabel": "Department",
+          "valueId": "1713675",
+          "valueLabel": "Engineering"
+        }
+      ],
+      "visibility": "PUBLIC",
+      "ref": "https://api.smartrecruiters.com/v1/companies/LinkedIn3/postings/744000161591209",
+      "language": {
+        "code": "en",
+        "label": "English",
+        "labelNative": "English (US)"
+      }
+    },
+    {
+      "id": "744000161582654",
+      "name": "Sr. People Analytics Analyst",
+      "uuid": "02e9cdb9-98aa-4222-9617-bb65a9ce63e6",
+      "jobAdId": "51bf82fb-c8cb-4f3c-9204-812378b13a41",
+      "defaultJobAd": true,
+      "refNumber": "REQ25482",
+      "company": {
+        "identifier": "LinkedIn3",
+        "name": "LinkedIn"
+      },
+      "releasedDate": "2026-11-13T22:02:54.314Z",
+      "location": {
+        "city": "Sunnyvale",
+        "region": "CA",
+        "country": "us",
+        "remote": false,
+        "hybrid": true,
+        "fullLocation": "Sunnyvale, CA, United States"
+      },
+      "industry": {
+        "id": "internet",
+        "label": "Internet"
+      },
+      "department": {
+        "id": "12235502",
+        "label": "GTO"
+      },
+      "function": {
+        "id": "sales",
+        "label": "Sales"
+      },
+      "typeOfEmployment": {
+        "id": "permanent",
+        "label": "Full-time"
+      },
+      "experienceLevel": {
+        "id": "mid_senior_level",
+        "label": "Mid-Senior Level"
+      },
+      "customField": [
+        {
+          "fieldId": "5fca7483c7f623505f9a0585",
+          "fieldLabel": "Career Track & Grade",
+          "valueId": "IC38",
+          "valueLabel": "IC3/8"
+        },
+        {
+          "fieldId": "5fca72a4c7f623505f9a0584",
+          "fieldLabel": "Job Family and Level",
+          "valueId": "People Analytics - IC",
+          "valueLabel": "People Analytics - IC"
+        },
+        {
+          "fieldId": "COUNTRY",
+          "fieldLabel": "Country/Region",
+          "valueId": "us",
+          "valueLabel": "United States"
+        },
+        {
+          "fieldId": "5f342ede29cf3d34dae379c0",
+          "fieldLabel": "Secondary Language",
+          "valueId": "dc376009-020d-45f9-8052-cba8d16799d8",
+          "valueLabel": "N/A"
+        },
+        {
+          "fieldId": "5f342b333803e6711667cf97",
+          "fieldLabel": "Job Level",
+          "valueId": "d85494f8-2715-4ca0-aa54-9bd61ccd74b6",
+          "valueLabel": "Mid-Senior Level"
+        },
+        {
+          "fieldId": "5fca73e7a502b54127820081",
+          "fieldLabel": "System Title",
+          "valueId": "Sr. People Analytics Analyst",
+          "valueLabel": "Sr. People Analytics Analyst"
+        },
+        {
+          "fieldId": "5f342b6729cf3d34dae379be",
+          "fieldLabel": "Employee Type",
+          "valueId": "bb960dfc-ec2b-41c8-97cf-6fb155d89854",
+          "valueLabel": "Employee"
+        },
+        {
+          "fieldId": "5f342f14afa56d15f50c1a5b",
+          "fieldLabel": "Tertiary Language",
+          "valueId": "535057fb-da56-4f41-97c7-41e2e7351138",
+          "valueLabel": "N/A"
+        },
+        {
+          "fieldId": "6243642ce6aebe3bc5c22756",
+          "fieldLabel": "Workplace Type",
+          "valueId": "e089500a-bc74-4552-a50d-551cceec2265",
+          "valueLabel": "Hybrid"
+        },
+        {
+          "fieldId": "5f3425a7afa56d15f50c1a56",
+          "fieldLabel": "Recruiting Team",
+          "valueId": "fb3f5abd-a2c7-4135-b52c-626e43f97dd5",
+          "valueLabel": "NAMER ARM"
+        },
+        {
+          "fieldId": "5fca715152c79415257db289",
+          "fieldLabel": "Cost Center Country",
+          "valueId": "UnitedStates",
+          "valueLabel": "United States"
+        },
+        {
+          "fieldId": "5fca7110c7f623505f9a0582",
+          "fieldLabel": "Cost Center:",
+          "valueId": "5136TalentInsights",
+          "valueLabel": "5136 - Talent Insights"
+        },
+        {
+          "fieldId": "5f342c57afa56d15f50c1a5a",
+          "fieldLabel": "Region",
+          "valueId": "083bcabf-7d75-4f51-a91a-331d89c0d1b7",
+          "valueLabel": "NAMER"
+        },
+        {
+          "fieldId": "5f342b9229cf3d34dae379bf",
+          "fieldLabel": "Time Type",
+          "valueId": "0f99a586-37a4-4870-918e-8d72d49996d2",
+          "valueLabel": "Full Time"
+        },
+        {
+          "fieldId": "5f3175c83263b149688b3d7b",
+          "fieldLabel": "Brands",
+          "valueId": "default",
+          "valueLabel": "LinkedIn"
+        },
+        {
+          "fieldId": "5f3175c83263b149688b3d7c",
+          "fieldLabel": "Department",
+          "valueId": "12235502",
+          "valueLabel": "GTO"
+        }
+      ],
+      "visibility": "PUBLIC",
+      "ref": "https://api.smartrecruiters.com/v1/companies/LinkedIn3/postings/744000161582654",
+      "language": {
+        "code": "en",
+        "label": "English",
+        "labelNative": "English (US)"
+      }
+    }
+  ]
+}

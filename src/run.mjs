@@ -1,5 +1,5 @@
 import { diffJobs, jobKey } from './diff.mjs';
-import { createJsonClient } from './http.mjs';
+import { createHttpClient } from './http.mjs';
 
 function terms(value, field) {
   if (value === undefined) return [];
@@ -46,14 +46,15 @@ export async function run(input, previousState, options = {}) {
   }
 
   const adapters = options.adapters ?? await import('./sources.mjs');
-  const getJson = createJsonClient(options);
+  const { getJson, getText } = createHttpClient(options);
   const results = await Promise.all(companies.map(async ({ source, company }) => {
     const started = performance.now();
     try {
       if (!Object.hasOwn(adapters, source) || typeof adapters[source] !== 'function') {
         throw new Error(`Unsupported source: ${source}`);
       }
-      const jobs = await adapters[source](company, { getJson });
+      const warnings = [];
+      const jobs = await adapters[source](company, { getJson, getText, onWarning: message => warnings.push(String(message)) });
       if (!Array.isArray(jobs)) throw new TypeError('Source returned an invalid job list');
       const unique = new Map();
       for (const job of jobs) {
@@ -64,6 +65,7 @@ export async function run(input, previousState, options = {}) {
       }
       return { jobs: [...unique.values()], report: {
         source, company, totalJobs: unique.size, newJobs: 0, error: null,
+        ...(warnings.length ? { warnings } : {}),
         durationMs: Math.round(performance.now() - started),
       } };
     } catch (error) {

@@ -1,0 +1,9 @@
+{
+  "capturedAt": "2026-11-14T21:57:11.874Z",
+  "url": "https://api.smartrecruiters.com/v1/companies/LinkedIn3/postings?limit=100&offset=0",
+  "company": "LinkedIn3",
+  "originalTotalFound": 190,
+  "receivedJobs": 100,
+  "retainedJobs": 2,
+  "note": "Original pagination metadata retained; content trimmed to two real postings."
+}

@@ -28,7 +28,10 @@
               "lever",
               "ashby",
               "workable",
-              "recruitee"
+              "recruitee",
+              "smartrecruiters",
+              "breezy",
+              "personio"
             ],
             "title": "ATS",
             "description": "Applicant tracking system that hosts the board.",

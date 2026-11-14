@@ -9,7 +9,7 @@ export class HttpError extends Error {
 }
 
 /** One shared client per run. Slots cover fetch and response consumption. */
-export function createJsonClient({
+export function createHttpClient({
   fetchImpl = globalThis.fetch,
   concurrency = 4,
   sleep = delay,
@@ -49,17 +49,19 @@ export function createJsonClient({
     return Number.isFinite(date) ? Math.max(0, date - now()) : 1000;
   }
 
-  return async function getJson(url) {
+  async function request(url, format) {
     for (let attempt = 0; attempt < 2; attempt += 1) {
       await acquire();
       let wait;
       try {
         const response = await fetchImpl(url, {
-          headers: { Accept: 'application/json' },
+          headers: { Accept: format === 'text' ? 'application/xml, text/xml' : 'application/json' },
           redirect: 'error',
           signal: AbortSignal.timeout(timeoutMs),
         });
-        if (response.ok) return await response.json();
+        if (response.ok) {
+          return await (format === 'text' ? response.text() : response.json());
+        }
         const error = new HttpError(response.status, url);
         const retryable = response.status === 429 ||
           (response.status >= 500 && response.status <= 599);
@@ -74,9 +76,17 @@ export function createJsonClient({
       } finally {
         release();
       }
-      // Waiting never occupies a request slot. Transport and JSON errors
-      // propagate without retry; only HTTP 429 and 5xx qualify.
+      // Waiting never occupies a slot. Only HTTP 429 and 5xx qualify for retry.
       await sleep(wait);
     }
+  }
+
+  return {
+    getJson: url => request(url, 'json'),
+    getText: url => request(url, 'text'),
   };
+}
+
+export function createJsonClient(options) {
+  return createHttpClient(options).getJson;
 }

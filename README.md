@@ -1,8 +1,8 @@
-# New Jobs Monitor: Greenhouse, Lever, Ashby, Workable, Recruitee
+# New Jobs Monitor: Greenhouse, Lever, Ashby, Workable, Recruitee, SmartRecruiters, Breezy HR, Personio
 
 Monitor public ATS boards and pay per newly observed matching job, plus a run-started event. The example uses stateless demo mode, which can return and charge the same current jobs on every run.
 
-Track Greenhouse, Lever, Ashby, Workable and Recruitee boards without maintaining your own scraper. Each run compares published job IDs with persistent history and saves matching jobs it has not processed before.
+Track Greenhouse, Lever, Ashby, Workable, Recruitee, SmartRecruiters, Breezy HR and Personio boards without maintaining your own scraper. Each run compares published job IDs with persistent history and saves matching jobs it has not processed before.
 
 ## Quick start
 
@@ -36,6 +36,9 @@ Use the board identifier rather than a company name or full URL:
 | Ashby | First path segment after `jobs.ashbyhq.com/`. | `ramp` |
 | Workable | Company path after `apply.workable.com/`; a `/j/` link identifies a job rather than its company board. | `huggingface` |
 | Recruitee | Company subdomain in `company.recruitee.com`; a custom career domain may require inspecting its underlying board links. | `bunq` |
+| SmartRecruiters | Company segment after `/v1/companies/` in the public API URL, also the first path segment after `jobs.smartrecruiters.com/`. Identifiers are case-sensitive. | `LinkedIn3` |
+| Breezy HR | Company subdomain in `company.breezy.hr`. | `breezy` |
+| Personio | Company subdomain in `company.jobs.personio.de`. | `personio` |
 
 Identifiers can differ from company names. The Actor does not discover identifiers or follow custom career sites. A missing or inaccessible board appears as an error in the report.
 
@@ -92,6 +95,7 @@ Dataset writes, charges and state updates are separate operations. If a storage 
 - All observed IDs enter history, including jobs excluded by filters. Changing filters therefore does not return previously observed jobs. Use a new key when you intentionally want fresh history.
 - Removed jobs remain recorded. Reappearing jobs and edits to existing IDs are not new jobs. New means first observed ID, not necessarily newly published.
 - Requests default to a 30-second timeout, with at most four simultaneous requests. HTTP 429 and 5xx receive at most one retry. Excessive Retry-After waits stop that board attempt without an early retry. Transport errors and other HTTP errors are not retried.
+- SmartRecruiters reads at most 60 pages of 100 postings per company; if that limit cuts a board short, the jobs read are returned and the company report carries a warning. Breezy HR and Personio do not publish structured salary data, so salary fields stay null there; Personio also leaves `remote` null.
 - Coverage depends on each public endpoint. There is no browser, proxy, login, identifier discovery or automatic fallback scraping. History grows with observed IDs.
 
 The earlier core live test returned 1627 jobs followed by zero new jobs. Seven boards succeeded in both rounds; Spotify timed out in round two with the test's five-second override, and the tested Workable `hackthebox` and Recruitee `mollie` identifiers returned 404. The 30-second default has not been revalidated against those boards. The Actor wrapper is tested offline; deployment, platform billing and scheduling require platform validation.

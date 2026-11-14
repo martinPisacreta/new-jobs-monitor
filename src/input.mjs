@@ -1,4 +1,4 @@
-export const SOURCES = ['greenhouse', 'lever', 'ashby', 'workable', 'recruitee'];
+export const SOURCES = ['greenhouse', 'lever', 'ashby', 'workable', 'recruitee', 'smartrecruiters', 'breezy', 'personio'];
 export const MAX_COMPANIES = 200;
 
 function filters(value, name) {

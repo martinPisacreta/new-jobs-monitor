@@ -143,3 +143,41 @@ export async function recruitee(company, options) {
     });
   });
 }
+
+
+export async function smartrecruiters(company, options) {
+  const board = identifier(company);
+  const getJson = transport(options);
+  const result = [];
+  const seen = new Set();
+  let offset = 0;
+  for (let page = 0; page < 60; page += 1) {
+    const body = await getJson(`https://api.smartrecruiters.com/v1/companies/${board}/postings?limit=100&offset=${offset}`);
+    const jobs = list(body, 'content', 'smartrecruiters');
+    if (!Number.isSafeInteger(body.totalFound) || body.totalFound < 0) {
+      throw new TypeError('smartrecruiters: invalid totalFound');
+    }
+    for (const job of jobs) {
+      const location = joined([job.location?.city, job.location?.region, job.location?.country]);
+      const item = record('smartrecruiters', company, job.id, {
+        title: text(job.name), location,
+        remote: remote(job.location?.remote, null, location),
+        department: text(job.department?.label),
+        url: `https://jobs.smartrecruiters.com/${board}/${encodeURIComponent(String(job.id))}`,
+        publishedAt: date(job.releasedDate),
+      });
+      if (!seen.has(item.id)) {
+        seen.add(item.id);
+        result.push(item);
+      }
+    }
+    offset += jobs.length;
+    if (offset >= body.totalFound) return result;
+    if (!jobs.length) throw new Error('smartrecruiters: empty page before totalFound');
+  }
+  options?.onWarning?.(`SmartRecruiters reached the 60-page limit; returning ${result.length} unique jobs from ${offset} postings read. Coverage is incomplete.`);
+  return result;
+}
+
+export { breezy } from './breezy.mjs';
+export { personio } from './personio.mjs';
