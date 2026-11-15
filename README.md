@@ -89,6 +89,95 @@ Before each batch, the Actor calculates how many new-job events fit the remainin
 
 Dataset writes, charges and state updates are separate operations. If a storage or charging failure prevents the final state commit, restarting may return and charge jobs again. Inspect the failed run's dataset and charges before restarting.
 
+## What can you do with it?
+
+### Start a daily hiring feed
+Collect matching jobs from selected public company boards into a dataset. Keep the same persistent state key between runs so previously processed job IDs are remembered.
+
+```json
+{
+  "companies": [{"source": "ashby", "company": "linear"}],
+  "stateKey": "daily-hiring",
+  "firstRun": "all",
+  "maxNewJobs": 100
+}
+```
+
+### Monitor future additions
+Establish a baseline without returning the jobs already present on the first run. Subsequent runs using this key can return newly observed matching IDs.
+
+```json
+{
+  "companies": [{"source": "recruitee", "company": "bunq"}],
+  "stateKey": "future-additions",
+  "firstRun": "none",
+  "maxNewJobs": 100
+}
+```
+
+### Build a focused research dataset
+Filter job titles and published location text before saving matching jobs. This example searches the Stripe board for investigator roles in Dublin; results depend on the current board contents.
+
+```json
+{
+  "companies": [{"source": "greenhouse", "company": "stripe"}],
+  "stateKey": "role-research",
+  "keywords": ["Investigator"],
+  "locations": ["Dublin"],
+  "maxNewJobs": 100
+}
+```
+
+### Combine different hiring systems
+Read boards hosted by different supported systems in one run. Source and company fields keep the resulting records attributable to their boards.
+
+```json
+{
+  "companies": [
+    {"source": "smartrecruiters", "company": "LinkedIn3"},
+    {"source": "breezy", "company": "breezy"},
+    {"source": "personio", "company": "personio"}
+  ],
+  "stateKey": "combined-boards",
+  "maxNewJobs": 1000
+}
+```
+
+## How much does it cost?
+
+The event prices are USD 0.005 per valid run plus USD 0.001 per newly observed matching job successfully charged.
+
+- A valid run with no charged new-job events: USD 0.005 + (0 × USD 0.001) = **USD 0.005**.
+- A run with 100 charged new-job events: USD 0.005 + (100 × USD 0.001) = **USD 0.105**.
+
+Initial matching jobs returned with `firstRun: "all"` count toward job events. A baseline established with `firstRun: "none"` produces no job events. These calculations cover the listed event prices; check your Apify account for any additional applicable platform charges.
+
+Dataset writes, charges and history commits are separate operations. A failure before history is committed can cause a restarted run to return and charge jobs again; inspect the failed run before restarting.
+
+## FAQ
+
+### What counts as a new job?
+A new job is a first-observed ID in the selected history, not necessarily a recently published vacancy. Edits and reappearances of previously observed IDs do not count as new.
+
+### Can I change filters later?
+Yes, but history includes observed IDs excluded by earlier filters, so changing filters does not return those jobs retroactively. Use a separate state key when you want independent history; keyword and location matching ignores case and searches substrings.
+
+### What happens if a company board fails?
+Other successful boards can still return results, and the failed board's previous history is preserved. Inspect the per-company report in the key-value store's `OUTPUT` record; a failure does not mean the board is empty.
+
+### What are the main limits?
+Input accepts 1–200 boards, up to 50 title keywords and 50 location filters, and `maxNewJobs` from 1 to 10000. The Actor uses supported public endpoints without browser scraping, login or identifier discovery; SmartRecruiters coverage is capped at 60 pages of up to 100 postings per company.
+
+### How do I schedule a daily run?
+Save the input as an Apify Task and create a daily Schedule for that Task. Keep a persistent state key and prevent overlapping runs using the same key; `demo` never saves history and can return and charge the same jobs again.
+
+### How do I export CSV or JSON?
+Open the run's default dataset in Apify and select a CSV or JSON export. The dataset contains job records; the separate `OUTPUT` record contains the run report and processing counts.
+
+## Integrations
+
+Start runs through the Apify API using the same input fields shown above. Configure Apify webhooks to notify your system about run lifecycle events. In an automation workflow, start the run, wait for completion and retrieve its dataset and `OUTPUT` report.
+
 ## Limits and behavior
 
 - A failed company does not stop successful companies or erase its previous history. Failure is not evidence of an empty board.
