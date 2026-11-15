@@ -125,7 +125,7 @@ test('Rippling maps its saved fixture to the existing output contract', async ()
   assert.equal(rows[0].salaryMin, null);
 });
 
-test('run shares spacing across old and new sources and preserves ID history', async () => {
+test('run avoids cross-host pauses and preserves ID history', async () => {
   const page = await fixture('workday-page-1');
   const ripplingBody = await fixture('rippling');
   const input = { companies: [
@@ -135,13 +135,12 @@ test('run shares spacing across old and new sources and preserves ID history', a
   ], workdayMaxPages: 1 };
   const execute = async previous => {
     let time = 0;
-    let finished = null;
+    const waits = [];
     let calls = 0;
     const result = await run(input, previous, {
       now: () => time,
-      sleep: async ms => { time += ms; },
+      sleep: async ms => { waits.push(ms); time += ms; },
       fetchImpl: async (url, init) => {
-        if (finished !== null) assert.ok(time - finished >= 1500);
         calls++;
         let body;
         if (url.includes('myworkdayjobs.com')) {
@@ -155,10 +154,11 @@ test('run shares spacing across old and new sources and preserves ID history', a
           assert.ok(url.includes('greenhouse.io'));
           body = { jobs: [] };
         }
-        return { ok: true, json: async () => { time += 100; finished = time; return body; } };
+        return { ok: true, json: async () => { time += 100; return body; } };
       },
     });
     assert.equal(calls, 3);
+    assert.deepEqual(waits, []);
     assert.ok(result.report.every(item => item.error === null));
     const report = result.report.find(item => item.source === 'workday');
     assert.equal(report.company, company);

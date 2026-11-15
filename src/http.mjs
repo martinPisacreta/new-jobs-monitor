@@ -28,13 +28,12 @@ export function createHttpClient({
   if (!Number.isFinite(minIntervalMs) || minIntervalMs < 0) {
     throw new TypeError('minIntervalMs must be a nonnegative number');
   }
-  const slots = minIntervalMs > 0 ? 1 : concurrency;
-  let finishedAt = null;
+  const hosts = new Map();
   let active = 0;
   const waiting = [];
 
   async function acquire() {
-    if (active < slots) {
+    if (active < concurrency) {
       active += 1;
       return;
     }
@@ -47,6 +46,36 @@ export function createHttpClient({
     else active -= 1;
   }
 
+  // Host queues and cooldowns do not occupy global HTTP slots.
+  async function acquireHost(url) {
+    if (minIntervalMs === 0) return () => {};
+    const hostname = new URL(url).hostname;
+    if (hostname !== 'api.rippling.com' &&
+        !hostname.endsWith('.myworkdayjobs.com')) return () => {};
+    let state = hosts.get(hostname);
+    if (!state) {
+      state = { tail: Promise.resolve(), finishedAt: null };
+      hosts.set(hostname, state);
+    }
+    const previous = state.tail;
+    let unlock;
+    state.tail = new Promise(resolve => { unlock = resolve; });
+    try {
+      await previous;
+      if (state.finishedAt !== null) {
+        const remaining = state.finishedAt + minIntervalMs - now();
+        if (remaining > 0) await sleep(remaining);
+      }
+    } catch (error) {
+      unlock();
+      throw error;
+    }
+    return () => {
+      state.finishedAt = now();
+      unlock();
+    };
+  }
+
   function retryWait(value) {
     if (!value?.trim()) return 1000;
     const text = value.trim();
@@ -57,13 +86,10 @@ export function createHttpClient({
 
   async function request(url, format, init = {}) {
     for (let attempt = 0; attempt < 2; attempt += 1) {
+      const releaseHost = await acquireHost(url);
       await acquire();
       let wait;
       try {
-        if (minIntervalMs > 0 && finishedAt !== null) {
-          const remaining = finishedAt + minIntervalMs - now();
-          if (remaining > 0) await sleep(remaining);
-        }
         const headers = new Headers(init.headers);
         if (!headers.has('Accept')) {
           headers.set('Accept', format === 'text' ? 'application/xml, text/xml' : 'application/json');
@@ -71,7 +97,10 @@ export function createHttpClient({
         const timeout = AbortSignal.timeout(timeoutMs);
         const signal = init.signal ? AbortSignal.any([init.signal, timeout]) : timeout;
         const response = await fetchImpl(url, {
-          ...init, headers: Object.fromEntries([...headers].map(([key, value]) => [key === 'accept' ? 'Accept' : key, value])), redirect: 'error', signal,
+          ...init,
+          headers: Object.fromEntries([...headers].map(([key, value]) => [key === 'accept' ? 'Accept' : key, value])),
+          redirect: 'error',
+          signal,
         });
         if (response.ok) {
           return await (format === 'text' ? response.text() : response.json());
@@ -88,10 +117,10 @@ export function createHttpClient({
           throw error;
         }
       } finally {
-        if (minIntervalMs > 0) finishedAt = now();
         release();
+        releaseHost();
       }
-      // Waiting never occupies a slot. Only HTTP 429 and 5xx qualify for retry.
+      // Retry waits also occur outside HTTP slots and host locks.
       await sleep(wait);
     }
   }
