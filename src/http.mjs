@@ -16,6 +16,7 @@ export function createHttpClient({
   now = Date.now,
   timeoutMs = 30000,
   maxRetryWaitMs = 30000,
+  minIntervalMs = 0,
 } = {}) {
   if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 4) {
     throw new TypeError('concurrency must be an integer from 1 to 4');
@@ -24,11 +25,16 @@ export function createHttpClient({
       !Number.isFinite(maxRetryWaitMs) || maxRetryWaitMs < 0) {
     throw new TypeError('Invalid HTTP timeout or retry wait limit');
   }
+  if (!Number.isFinite(minIntervalMs) || minIntervalMs < 0) {
+    throw new TypeError('minIntervalMs must be a nonnegative number');
+  }
+  const slots = minIntervalMs > 0 ? 1 : concurrency;
+  let finishedAt = null;
   let active = 0;
   const waiting = [];
 
   async function acquire() {
-    if (active < concurrency) {
+    if (active < slots) {
       active += 1;
       return;
     }
@@ -49,15 +55,23 @@ export function createHttpClient({
     return Number.isFinite(date) ? Math.max(0, date - now()) : 1000;
   }
 
-  async function request(url, format) {
+  async function request(url, format, init = {}) {
     for (let attempt = 0; attempt < 2; attempt += 1) {
       await acquire();
       let wait;
       try {
+        if (minIntervalMs > 0 && finishedAt !== null) {
+          const remaining = finishedAt + minIntervalMs - now();
+          if (remaining > 0) await sleep(remaining);
+        }
+        const headers = new Headers(init.headers);
+        if (!headers.has('Accept')) {
+          headers.set('Accept', format === 'text' ? 'application/xml, text/xml' : 'application/json');
+        }
+        const timeout = AbortSignal.timeout(timeoutMs);
+        const signal = init.signal ? AbortSignal.any([init.signal, timeout]) : timeout;
         const response = await fetchImpl(url, {
-          headers: { Accept: format === 'text' ? 'application/xml, text/xml' : 'application/json' },
-          redirect: 'error',
-          signal: AbortSignal.timeout(timeoutMs),
+          ...init, headers: Object.fromEntries([...headers].map(([key, value]) => [key === 'accept' ? 'Accept' : key, value])), redirect: 'error', signal,
         });
         if (response.ok) {
           return await (format === 'text' ? response.text() : response.json());
@@ -74,6 +88,7 @@ export function createHttpClient({
           throw error;
         }
       } finally {
+        if (minIntervalMs > 0) finishedAt = now();
         release();
       }
       // Waiting never occupies a slot. Only HTTP 429 and 5xx qualify for retry.
@@ -82,8 +97,8 @@ export function createHttpClient({
   }
 
   return {
-    getJson: url => request(url, 'json'),
-    getText: url => request(url, 'text'),
+    getJson: (url, init) => request(url, 'json', init),
+    getText: (url, init) => request(url, 'text', init),
   };
 }
 

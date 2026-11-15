@@ -1,6 +1,6 @@
 {
   "title": "New Jobs Monitor input",
-  "description": "Choose public ATS boards and a persistent state key. Serialize runs using the same key.",
+  "description": "Monitor public job boards from Greenhouse, Lever, Ashby, Workable, Recruitee, SmartRecruiters, Breezy HR, Personio, Workday and Rippling with ID-based history.",
   "type": "object",
   "schemaVersion": 1,
   "required": [
@@ -10,7 +10,7 @@
     "companies": {
       "title": "Company boards",
       "type": "array",
-      "description": "Between 1 and 200 boards. Use board identifiers, not URLs.",
+      "description": "Between 1 and 200 boards. Workday accepts a public HTTPS board URL or tenant/wdN/site. Other sources use board identifiers.",
       "editor": "json",
       "minItems": 1,
       "maxItems": 200,
@@ -31,7 +31,9 @@
               "recruitee",
               "smartrecruiters",
               "breezy",
-              "personio"
+              "personio",
+              "workday",
+              "rippling"
             ],
             "title": "ATS",
             "description": "Applicant tracking system that hosts the board.",
@@ -39,9 +41,8 @@
           },
           "company": {
             "type": "string",
-            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]*$",
             "title": "Board identifier",
-            "description": "Public board identifier of the company in that ATS, not a URL.",
+            "description": "Workday: public HTTPS board URL on tenant.wdN.myworkdayjobs.com or tenant/wdN/site. Other sources: board identifiers. Source-specific validation runs before requests.",
             "editor": "textfield"
           }
         }
@@ -114,6 +115,15 @@
       "minimum": 1,
       "maximum": 10000,
       "default": 1000
+    },
+    "workdayMaxPages": {
+      "title": "Maximum Workday pages per company",
+      "type": "integer",
+      "description": "Each page contains up to 20 jobs. Default: 10 pages, up to 200 jobs per company. The per-company run report indicates truncation.",
+      "editor": "number",
+      "minimum": 1,
+      "maximum": 100,
+      "default": 10
     }
   }
 }

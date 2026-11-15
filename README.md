@@ -2,7 +2,7 @@
 
 Monitor public ATS boards and pay per newly observed matching job, plus a run-started event. The example uses stateless demo mode, which can return and charge the same current jobs on every run.
 
-Track Greenhouse, Lever, Ashby, Workable, Recruitee, SmartRecruiters, Breezy HR and Personio boards without maintaining your own scraper. Each run compares published job IDs with persistent history and saves matching jobs it has not processed before.
+Track Greenhouse, Lever, Ashby, Workable, Recruitee, SmartRecruiters, Breezy HR, Personio, Workday and Rippling boards without maintaining your own scraper. Each run compares published job IDs with persistent history and saves matching jobs it has not processed before.
 
 ## Quick start
 
@@ -188,3 +188,36 @@ Start runs through the Apify API using the same input fields shown above. Config
 - Coverage depends on each public endpoint. There is no browser, proxy, login, identifier discovery or automatic fallback scraping. History grows with observed IDs.
 
 The earlier core live test returned 1627 jobs followed by zero new jobs. Seven boards succeeded in both rounds; Spotify timed out in round two with the test's five-second override, and the tested Workable `hackthebox` and Recruitee `mollie` identifiers returned 404. The 30-second default has not been revalidated against those boards. The Actor wrapper is tested offline; deployment, platform billing and scheduling require platform validation.
+
+## Workday and Rippling
+
+
+| Source | Board identifier |
+| --- | --- |
+| Workday | Public HTTPS board URL on `tenant.wdN.myworkdayjobs.com`, optionally with a locale, or `tenant/wdN/site`. |
+| Rippling | Board slug from `ats.rippling.com/<slug>`. |
+
+The other eight sources keep the identifiers documented above. Workday URL and short forms normalize to one company identity and share ID history. Foreign hosts, credentials, ports, query strings and fragments are rejected before requests.
+
+```json
+{
+  "companies": [
+    {
+      "source": "workday",
+      "company": "https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite"
+    },
+    {
+      "source": "rippling",
+      "company": "rippling"
+    }
+  ],
+  "stateKey": "additional-boards",
+  "firstRun": "none",
+  "workdayMaxPages": 10
+}
+```
+
+`workdayMaxPages` accepts integers from 1 to 100 and defaults to 10 per company. Each page contains up to 20 jobs: the default retrieves at most 200 jobs per company. Workday reports `pagesFetched`, `pageSize`, `maxPages`, `totalReported`, `truncated` and `stopReason`. Page caps and repeated pages may leave results incomplete. The initial reported total is retained when later pages report zero.
+
+All sources in a run share one HTTP client with serialized response consumption and at least 1.5 seconds between completion and the next request. Existing retry behavior is retained. Missing dates and salary fields remain null; relative Workday dates are not converted into absolute dates. Rippling completeness beyond its returned array has not been established.
+

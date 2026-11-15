@@ -1,4 +1,6 @@
-export const SOURCES = ['greenhouse', 'lever', 'ashby', 'workable', 'recruitee', 'smartrecruiters', 'breezy', 'personio'];
+import { normalizeWorkdayCompany } from './workday-company.mjs';
+
+export const SOURCES = ["greenhouse", "lever", "ashby", "workable", "recruitee", "smartrecruiters", "breezy", "personio", "workday", "rippling"];
 export const MAX_COMPANIES = 200;
 
 function filters(value, name) {
@@ -22,14 +24,18 @@ export function parseInput(input) {
   const seen = new Set();
   for (const entry of input.companies) {
     if (!entry || typeof entry !== 'object' || Array.isArray(entry) ||
-        !SOURCES.includes(entry.source) || typeof entry.company !== 'string' ||
-        !/^[a-zA-Z0-9][a-zA-Z0-9_-]*$/.test(entry.company)) {
+        !SOURCES.includes(entry.source) || typeof entry.company !== 'string') {
+      throw new TypeError('Each company needs a supported source and a valid board identifier');
+    }
+    const company = entry.source === 'workday'
+      ? normalizeWorkdayCompany(entry.company) : entry.company;
+    if (entry.source !== 'workday' && !/^[a-zA-Z0-9][a-zA-Z0-9_-]*$/.test(company)) {
       throw new TypeError('Each company needs a supported source and a board identifier without URLs or paths');
     }
-    const key = `${entry.source}:${entry.company}`;
+    const key = `${entry.source}:${company}`;
     if (!seen.has(key)) {
       seen.add(key);
-      companies.push({ source: entry.source, company: entry.company });
+      companies.push({ source: entry.source, company });
     }
   }
   const stateKey = input.stateKey === undefined ||
@@ -46,7 +52,15 @@ export function parseInput(input) {
   if (!Number.isInteger(maxNewJobs) || maxNewJobs < 1 || maxNewJobs > 10000) {
     throw new TypeError('maxNewJobs must be an integer between 1 and 10000');
   }
-  return { companies, stateKey, firstRun, maxNewJobs,
+  const result = { companies, stateKey, firstRun, maxNewJobs,
     keywords: filters(input.keywords, 'keywords'),
     locations: filters(input.locations, 'locations') };
+  if (input.workdayMaxPages !== undefined) {
+    if (!Number.isInteger(input.workdayMaxPages) ||
+        input.workdayMaxPages < 1 || input.workdayMaxPages > 100) {
+      throw new TypeError('workdayMaxPages must be an integer between 1 and 100');
+    }
+    result.workdayMaxPages = input.workdayMaxPages;
+  }
+  return result;
 }

@@ -1,5 +1,6 @@
 import { diffJobs, jobKey } from './diff.mjs';
 import { createHttpClient } from './http.mjs';
+import { normalizeWorkdayCompany } from './workday-company.mjs';
 
 function terms(value, field) {
   if (value === undefined) return [];
@@ -26,6 +27,10 @@ export async function run(input, previousState, options = {}) {
   if (!input || !Array.isArray(input.companies)) {
     throw new TypeError('companies must be an array');
   }
+  const workdayMaxPages = input.workdayMaxPages ?? 10;
+  if (!Number.isInteger(workdayMaxPages) || workdayMaxPages < 1 || workdayMaxPages > 100) {
+    throw new TypeError('workdayMaxPages must be an integer between 1 and 100');
+  }
   const firstRun = input.firstRun ?? 'all';
   diffJobs([], previousState, { firstRun });
   const keywords = terms(input.keywords, 'keywords');
@@ -34,19 +39,24 @@ export async function run(input, previousState, options = {}) {
   const seenCompanies = new Set();
   for (const entry of input.companies) {
     if (!entry || !['source', 'company'].every(field =>
-      typeof entry[field] === 'string' && entry[field].trim() &&
-      !entry[field].includes(':'))) {
+      typeof entry[field] === 'string' && entry[field].trim()) ||
+      entry.source.includes(':')) {
       throw new TypeError('Each company needs nonempty source and company strings without colons');
     }
-    const key = `${entry.source}:${entry.company}`;
+    const company = entry.source === 'workday'
+      ? normalizeWorkdayCompany(entry.company) : entry.company;
+    if (company.includes(':')) {
+      throw new TypeError('Each company needs nonempty source and company strings without colons');
+    }
+    const key = `${entry.source}:${company}`;
     if (!seenCompanies.has(key)) {
       seenCompanies.add(key);
-      companies.push({ source: entry.source, company: entry.company });
+      companies.push({ source: entry.source, company });
     }
   }
 
   const adapters = options.adapters ?? await import('./sources.mjs');
-  const { getJson, getText } = createHttpClient(options);
+  const { getJson, getText } = createHttpClient({ ...options, minIntervalMs: 1500 });
   const results = await Promise.all(companies.map(async ({ source, company }) => {
     const started = performance.now();
     try {
@@ -54,7 +64,13 @@ export async function run(input, previousState, options = {}) {
         throw new Error(`Unsupported source: ${source}`);
       }
       const warnings = [];
-      const jobs = await adapters[source](company, { getJson, getText, onWarning: message => warnings.push(String(message)) });
+      let pagination;
+      const adapterOptions = { getJson, getText, onWarning: message => warnings.push(String(message)) };
+      if (source === 'workday') {
+        adapterOptions.maxPages = workdayMaxPages;
+        adapterOptions.onPagination = value => { pagination = { ...value }; };
+      }
+      const jobs = await adapters[source](company, adapterOptions);
       if (!Array.isArray(jobs)) throw new TypeError('Source returned an invalid job list');
       const unique = new Map();
       for (const job of jobs) {
@@ -66,6 +82,7 @@ export async function run(input, previousState, options = {}) {
       return { jobs: [...unique.values()], report: {
         source, company, totalJobs: unique.size, newJobs: 0, error: null,
         ...(warnings.length ? { warnings } : {}),
+        ...(source === 'workday' && pagination ? pagination : {}),
         durationMs: Math.round(performance.now() - started),
       } };
     } catch (error) {

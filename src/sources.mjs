@@ -181,3 +181,5 @@ export async function smartrecruiters(company, options) {
 
 export { breezy } from './breezy.mjs';
 export { personio } from './personio.mjs';
+
+export { workday, rippling } from './additional-sources.mjs';
